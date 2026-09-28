@@ -4,7 +4,7 @@ import pygame
 import random
 from config import (
     SCREEN_WIDTH, SCREEN_HEIGHT, GRAVITY, JUMP_VELOCITY, SPRING_JUMP_VELOCITY,
-    DOODLE_SPEED, DOODLE_WIDTH, DOODLE_HEIGHT, PLATFORM_WIDTH,
+    DOODLE_SPEED, DOODLE_WIDTH, DOODLE_HEIGHT, PLATFORM_WIDTH, PLATFORM_HEIGHT,
     MIN_PLATFORM_GAP, MAX_PLATFORM_GAP, CAMERA_SCROLL_THRESHOLD,
     PLATFORMS, doodle_dict, DOODLE_START_X, DOODLE_START_Y, LIVES
 )
@@ -96,15 +96,32 @@ def check_platform_collisions():
     #
     # Contraintes :
     # - aucun rebond pendant la montée ;
+    if doodle_dict["vel_y"] > 0: 
+        platforme = create_platform()
+        if doodle_dict["y"] >= platforme["y"] + 14 and platforme["active"]:
+            r1 = [platforme["x"], platforme["y"], PLATFORM_WIDTH, PLATFORM_HEIGHT]
+            r2 = [doodle_dict["x"], doodle_dict["y"], DOODLE_WIDTH, DOODLE_HEIGHT]
+            if rects_collide(r1, r2):
+                if create_platform()["type"] == choose_platform_type("spring"):
+                    doodle_dict["y"] += SPRING_JUMP_VELOCITY
+                elif create_platform()["type"] == choose_platform_type("brown"):
+                    doodle_dict["y"] += JUMP_VELOCITY
+                    create_platform()["active"] == False
+                elif create_platform()["type"] == choose_platform_type("green"):
+                    doodle_dict["y"] += JUMP_VELOCITY
+                elif create_platform()["type"] == choose_platform_type("blue"):
+                    doodle_dict["y"] += JUMP_VELOCITY
+
     # - ignorer les plateformes inactives ;
     # - utiliser rects_collide(...) pour le chevauchement des rectangles ;
     # - un simple chevauchement ne suffit pas : le Doodle doit arriver par
     #   le dessus de la plateforme. Pour le vérifier, comparez la position
     #   actuelle de ses pieds à leur position approximative à l'image
     #   précédente à l'aide de vel_y. Une tolérance de 14 pixels est permise ;
-    # - spring : SPRING_JUMP_VELOCITY ;
+    # - spring : SPRING_JUMP_VELOCITY 
     # - brown : JUMP_VELOCITY puis désactivation de la plateforme ;
     # - green/blue : JUMP_VELOCITY.
+    
 
     return
 
