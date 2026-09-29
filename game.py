@@ -41,14 +41,14 @@ def move_doodle():
     # TODO : Gérez les déplacements gauche/droite et mettez à jour
     # simultanément la direction et l'image du Doodle.
 
-    if pygame.K_LEFT in keys or pygame.K_a in keys:
+    if keys[pygame.K_LEFT] or keys[pygame.K_a]:
         doodle_dict["x"] -= DOODLE_SPEED
         doodle_dict["direction"] = "left"
-        doodle_dict["image"] = "doodle_left_img"
-    elif pygame.K_RIGHT in keys or pygame.K_d in keys:
+        doodle_dict["image"] = doodle_left_img
+    elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
         doodle_dict["x"] += DOODLE_SPEED
         doodle_dict["direction"] = "right"
-        doodle_dict["image"] = "doodle_right_img"
+        doodle_dict["image"] = doodle_right_img
 
 
 
@@ -76,10 +76,9 @@ def move_platforms():
     # bleues encore actives. Elles doivent rester dans la fenêtre en inversant
     # leur vitesse lorsqu'elles atteignent un bord.
     for platform in PLATFORMS:
-        if platform['type'] == 'blue':
-            platform['x'] += platform['vx']
-            if platform['x'] == SCREEN_WIDTH-PLATFORM_WIDTH or platform['x'] == 0:
-                platform['vx'] = -platform['vx']
+        platform['x'] += platform['vx']
+        if platform['x'] >= SCREEN_WIDTH-PLATFORM_WIDTH or platform['x'] <= 0:
+            platform['vx'] = -platform['vx']
     return
 
 # ===========================================================
@@ -97,20 +96,18 @@ def check_platform_collisions():
     # Contraintes :
     # - aucun rebond pendant la montée ;
     if doodle_dict["vel_y"] > 0: 
-        platforme = create_platform()
-        if doodle_dict["y"] >= platforme["y"] + 14 and platforme["active"]:
-            r1 = [platforme["x"], platforme["y"], PLATFORM_WIDTH, PLATFORM_HEIGHT]
-            r2 = [doodle_dict["x"], doodle_dict["y"], DOODLE_WIDTH, DOODLE_HEIGHT]
-            if rects_collide(r1, r2):
-                if create_platform()["type"] == choose_platform_type("spring"):
-                    doodle_dict["y"] += SPRING_JUMP_VELOCITY
-                elif create_platform()["type"] == choose_platform_type("brown"):
-                    doodle_dict["y"] += JUMP_VELOCITY
-                    create_platform()["active"] == False
-                elif create_platform()["type"] == choose_platform_type("green"):
-                    doodle_dict["y"] += JUMP_VELOCITY
-                elif create_platform()["type"] == choose_platform_type("blue"):
-                    doodle_dict["y"] += JUMP_VELOCITY
+        for platforme in PLATFORMS:#platforme = create_platform()
+            if doodle_dict["y"]+DOODLE_HEIGHT >= platforme["y"] +14 and platforme["active"]:
+                r1 = [platforme["x"], platforme["y"], PLATFORM_WIDTH, PLATFORM_HEIGHT]
+                r2 = [doodle_dict["x"], doodle_dict["y"], DOODLE_WIDTH, DOODLE_HEIGHT]
+                if rects_collide(r1, r2):
+                    if platforme["type"] == "spring":
+                        doodle_dict["vel_y"] = SPRING_JUMP_VELOCITY
+                    elif platforme["type"] == "brown":
+                        doodle_dict["vel_y"] = JUMP_VELOCITY
+                        platforme["active"] = False
+                    else: #Pour green et blue
+                        doodle_dict["vel_y"] = JUMP_VELOCITY
 
     # - ignorer les plateformes inactives ;
     # - utiliser rects_collide(...) pour le chevauchement des rectangles ;
@@ -142,6 +139,20 @@ def scroll_camera():
     # meilleur score doit être mis à jour. Les plateformes sorties sous
     # l'écran doivent être retirées, puis de nouvelles plateformes générées.
 
+    #Caméra et plateformes retirées
+    if doodle_dict["y"] < CAMERA_SCROLL_THRESHOLD:
+        distance = CAMERA_SCROLL_THRESHOLD - doodle_dict['y']
+        if doodle_dict['y'] < doodle_dict['y'] + distance:
+            doodle_dict['y'] += distance
+            doodle_dict['score'] += distance
+            if doodle_dict['high_score'] < doodle_dict['score']:
+                doodle_dict['high_score'] = doodle_dict['score']
+        for platform in PLATFORMS:
+            if platform['y'] < platform['y'] + distance:
+                platform['y'] += distance
+            if platform['y'] >= SCREEN_HEIGHT:
+                PLATFORMS.remove(platform)
+    #generate_new_platforms() implémentation selon comment la fonction sera codée
     return
 
 # ===========================================================
@@ -159,7 +170,8 @@ def generate_new_platforms():
     # Vous devrez partir de la plateforme actuellement la plus haute et
     # continuer à ajouter des plateformes tant que nécessaire. Utilisez
     # choose_platform_type(...) avec les probabilités indiquées dans le README.
-
+    platform_plus_haute = max(PLATFORMS[:]['y'])
+    
     return
 
 # ===========================================================

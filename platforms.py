@@ -82,9 +82,9 @@ def choose_platform_type(green_probability, blue_probability, spring_probability
     aleatoire = random.random()
     if aleatoire < green_probability:
         return 'green'
-    elif aleatoire >= green_probability and aleatoire < green_probability+blue_probability:
+    elif aleatoire < green_probability+blue_probability:
         return 'blue'
-    elif aleatoire >= green_probability+blue_probability and aleatoire < green_probability+blue_probability+spring_probability:
+    elif aleatoire < green_probability+blue_probability+spring_probability:
         return 'spring'
     else:
         return 'brown'
