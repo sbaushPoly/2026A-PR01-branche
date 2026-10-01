@@ -106,7 +106,7 @@ def check_platform_collisions():
                     elif platforme["type"] == "brown":
                         doodle_dict["vel_y"] = JUMP_VELOCITY
                         platforme["active"] = False
-                    else: #Pour green et blue
+                    else: #for green et blue
                         doodle_dict["vel_y"] = JUMP_VELOCITY
 
     # - ignorer les plateformes inactives ;
@@ -152,8 +152,10 @@ def scroll_camera():
                 platform['y'] += distance
             if platform['y'] >= SCREEN_HEIGHT:
                 PLATFORMS.remove(platform)
-    #generate_new_platforms() implémentation selon comment la fonction sera codée
+    generate_new_platforms() 
+
     return
+
 
 # ===========================================================
 
@@ -170,9 +172,25 @@ def generate_new_platforms():
     # Vous devrez partir de la plateforme actuellement la plus haute et
     # continuer à ajouter des plateformes tant que nécessaire. Utilisez
     # choose_platform_type(...) avec les probabilités indiquées dans le README.
-    platform_plus_haute = max(PLATFORMS[:]['y'])
-    
-    return
+
+    if not PLATFORMS:
+        x = random.randint(0, SCREEN_WIDTH)
+        y = SCREEN_HEIGHT
+        platform_type = choose_platform_type(0.55, 0.20, 0.13)
+        first_platform = create_platform(x, y, platform_type)
+        PLATFORMS.append(first_platform)
+
+    top_platforme = min(p["y"] for p in PLATFORMS)
+    while top_platforme > 0:
+        x = random.randint(0, SCREEN_WIDTH - PLATFORM_WIDTH)
+        y = random.randint(top_platforme - MAX_PLATFORM_GAP, top_platforme - MIN_PLATFORM_GAP)
+        platform_type = choose_platform_type(0.55, 0.20, 0.13)
+        new_platform = create_platform(x, y, platform_type)
+        PLATFORMS.append(new_platform)
+        top_platforme -= random.randint(MIN_PLATFORM_GAP, MAX_PLATFORM_GAP)
+        
+        
+    return PLATFORMS
 
 # ===========================================================
 
