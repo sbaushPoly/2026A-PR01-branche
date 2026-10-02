@@ -174,13 +174,13 @@ def generate_new_platforms():
     # choose_platform_type(...) avec les probabilités indiquées dans le README.
 
     if not PLATFORMS:
-        x = random.randint(0, SCREEN_WIDTH)
+        x = random.randint(0.0, SCREEN_WIDTH)
         y = SCREEN_HEIGHT
         platform_type = choose_platform_type(0.55, 0.20, 0.13)
         first_platform = create_platform(x, y, platform_type)
         PLATFORMS.append(first_platform)
 
-    top_platforme = min(p["y"] for p in PLATFORMS)
+    top_platforme = int(min(p["y"] for p in PLATFORMS))
     while top_platforme > 0:
         x = random.randint(0, SCREEN_WIDTH - PLATFORM_WIDTH)
         y = random.randint(top_platforme - MAX_PLATFORM_GAP, top_platforme - MIN_PLATFORM_GAP)
@@ -188,7 +188,6 @@ def generate_new_platforms():
         new_platform = create_platform(x, y, platform_type)
         PLATFORMS.append(new_platform)
         top_platforme -= random.randint(MIN_PLATFORM_GAP, MAX_PLATFORM_GAP)
-        
         
     return PLATFORMS
 
