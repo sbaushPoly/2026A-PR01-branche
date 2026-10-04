@@ -96,7 +96,7 @@ def check_platform_collisions():
     # Contraintes :
     # - aucun rebond pendant la montée ;
     if doodle_dict["vel_y"] > 0: 
-        for platforme in PLATFORMS:#platforme = create_platform()
+        for platforme in PLATFORMS:
             if doodle_dict["y"]+DOODLE_HEIGHT >= platforme["y"] +14 and platforme["active"]:
                 r1 = [platforme["x"], platforme["y"], PLATFORM_WIDTH, PLATFORM_HEIGHT]
                 r2 = [doodle_dict["x"], doodle_dict["y"], DOODLE_WIDTH, DOODLE_HEIGHT]
@@ -173,6 +173,7 @@ def generate_new_platforms():
     # continuer à ajouter des plateformes tant que nécessaire. Utilisez
     # choose_platform_type(...) avec les probabilités indiquées dans le README.
 
+    #Gérer les cas de plateformes vides  
     if not PLATFORMS:
         x = random.randint(0.0, SCREEN_WIDTH)
         y = SCREEN_HEIGHT
@@ -187,7 +188,7 @@ def generate_new_platforms():
         platform_type = choose_platform_type(0.55, 0.20, 0.13)
         new_platform = create_platform(x, y, platform_type)
         PLATFORMS.append(new_platform)
-        top_platforme -= random.randint(MIN_PLATFORM_GAP, MAX_PLATFORM_GAP)
+        top_platforme = y 
         
     return PLATFORMS
 
