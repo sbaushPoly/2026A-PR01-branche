@@ -89,7 +89,5 @@ def choose_platform_type(green_probability, blue_probability, spring_probability
     else:
         return 'brown'
 
-    #return "green"  # Valeur temporaire à remplacer
-
 # ===========================================================
 

@@ -95,20 +95,6 @@ def check_platform_collisions():
     #
     # Contraintes :
     # - aucun rebond pendant la montée ;
-    if doodle_dict["vel_y"] > 0: 
-        for platforme in PLATFORMS:
-            if doodle_dict["y"]+DOODLE_HEIGHT >= platforme["y"] +14 and platforme["active"]:
-                r1 = [platforme["x"], platforme["y"], PLATFORM_WIDTH, PLATFORM_HEIGHT]
-                r2 = [doodle_dict["x"], doodle_dict["y"], DOODLE_WIDTH, DOODLE_HEIGHT]
-                if rects_collide(r1, r2):
-                    if platforme["type"] == "spring":
-                        doodle_dict["vel_y"] = SPRING_JUMP_VELOCITY
-                    elif platforme["type"] == "brown":
-                        doodle_dict["vel_y"] = JUMP_VELOCITY
-                        platforme["active"] = False
-                    else: #for green et blue
-                        doodle_dict["vel_y"] = JUMP_VELOCITY
-
     # - ignorer les plateformes inactives ;
     # - utiliser rects_collide(...) pour le chevauchement des rectangles ;
     # - un simple chevauchement ne suffit pas : le Doodle doit arriver par
@@ -118,8 +104,20 @@ def check_platform_collisions():
     # - spring : SPRING_JUMP_VELOCITY 
     # - brown : JUMP_VELOCITY puis désactivation de la plateforme ;
     # - green/blue : JUMP_VELOCITY.
-    
 
+    if doodle_dict["vel_y"] > 0: 
+        for platforme in PLATFORMS:
+            if doodle_dict["y"]+DOODLE_HEIGHT <= platforme["y"] +14 and platforme["active"]:
+                r1 = [platforme["x"], platforme["y"], PLATFORM_WIDTH, PLATFORM_HEIGHT]
+                r2 = [doodle_dict["x"], doodle_dict["y"], DOODLE_WIDTH, DOODLE_HEIGHT]
+                if rects_collide(r1, r2):
+                    if platforme["type"] == "spring":
+                        doodle_dict["vel_y"] = SPRING_JUMP_VELOCITY
+                    elif platforme["type"] == "brown":
+                        doodle_dict["vel_y"] = JUMP_VELOCITY
+                        platforme["active"] = False
+                    else: #pour green et blue
+                        doodle_dict["vel_y"] = JUMP_VELOCITY
     return
 
 # ===========================================================
@@ -139,17 +137,14 @@ def scroll_camera():
     # meilleur score doit être mis à jour. Les plateformes sorties sous
     # l'écran doivent être retirées, puis de nouvelles plateformes générées.
 
-    #Caméra et plateformes retirées
     if doodle_dict["y"] < CAMERA_SCROLL_THRESHOLD:
         distance = CAMERA_SCROLL_THRESHOLD - doodle_dict['y']
-        if doodle_dict['y'] < doodle_dict['y'] + distance:
-            doodle_dict['y'] += distance
-            doodle_dict['score'] += distance
-            if doodle_dict['high_score'] < doodle_dict['score']:
-                doodle_dict['high_score'] = doodle_dict['score']
+        doodle_dict['y'] += distance
+        doodle_dict['score'] += distance
+        if doodle_dict['high_score'] < doodle_dict['score']:
+            doodle_dict['high_score'] = doodle_dict['score']
         for platform in PLATFORMS:
-            if platform['y'] < platform['y'] + distance:
-                platform['y'] += distance
+            platform['y'] += distance
             if platform['y'] >= SCREEN_HEIGHT:
                 PLATFORMS.remove(platform)
     generate_new_platforms() 
